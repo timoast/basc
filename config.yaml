@@ -1,0 +1,7 @@
+reference: hg38
+samples: config/samples.tsv
+reads: /home/stuartt/data/210924_NB552173_0145_AHVTNNBGXH
+name: NTT
+bases_mask: "Y48,Y23I8,Y*,Y48"
+reverse_complement: true
+outdir: /home/stuartt/data/test
