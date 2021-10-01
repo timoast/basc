@@ -4,6 +4,7 @@ import os
 import gzip
 from pathlib import Path
 from argparse import ArgumentParser
+import sys
 
 
 
@@ -91,7 +92,7 @@ for s5 in i5_index_valid:
             fname_2 = open(fpath / (bc + ".R2.fastq"), "w+")
             outf[bc + "-" + j] = (fname_1, fname_2)
 
-
+x = 0
 while True:
     r1_entry = get_entry(r1)
     r2_entry = get_entry(r2)
@@ -139,6 +140,9 @@ while True:
     r2_outf.write(r4_entry[1])
     r2_outf.write(r4_entry[2])
     r2_outf.write(r4_entry[3])
+    x += 1
+    if x % 1e6 == 0:
+        print("Processed " + str(int(x/1e6)) + " million reads", file=sys.stderr, end="\r")
     
 # close all files
 for i in outf.keys():
