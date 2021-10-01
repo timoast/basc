@@ -12,13 +12,6 @@ rc <- args[3]
 
 samples <- read.table(samplepath, sep = "\t", header = TRUE)
 
-# barcodes can be variable length
-# can have multiple sample barcodes
-
-# # check if all sample barcodes the same length
-# bc1 <- sapply(samples$i5_index, nchar)
-# bc2 <- sapply(samples$i7_index, nchar)
-
 if (rc == "True") {
   message("Reverse complementing barcodes")
   revcomp <- function(x) {
@@ -40,51 +33,52 @@ Chemistry,Amplicon
 Sample_ID,Description,I7_Index_ID,index,I5_Index_ID,index2,Sample_Project")
 
 outdir <- paste0(samplename, "_barcodes")
+samplesheet <- paste0(outdir, "/samplesheet.csv")
 if (!dir.exists(paths = outdir)) {
   dir.create(path = outdir)
-}
-samplesheet <- paste0(outdir, "/samplesheet.csv")
-write(x = header, file = samplesheet, append = TRUE)
-
-if (any(!is.na(x = samples$sample_index))) {
-  # get unique groups
-  grp.keep <- !duplicated(x = samples$sample_index)
-  groups <- samples$sample_index[grp.keep]
-  grn <- samples$group_name[grp.keep]
-  
-  # split by sample index
-  for (i in seq_along(along.with = groups)) {
-    group_split <- unlist(x = strsplit(x = groups[i], ","))
-    for (j in group_split) {
-      outstr <- paste(
-        grn[i], grn[i], j, j,
-        "","",
-        sep = ","
-      )
-      write(x = outstr, file = samplesheet, append = TRUE)
-    }
-  }
 } else {
-  # no sample index, demux everything to unassigned
-  outstr <- paste(
-    "unassigned", "unassigned",
-    "","","","",
-    sep = ","
-  )
-  write(x = outstr, file = samplesheet, append = TRUE)
+  if (file.exists(samplesheet)) {
+    file.remove(samplesheet)
+  }
 }
+# demux everything to unassigned
+write(x = header, file = samplesheet, append = TRUE)
+outstr <- paste(
+  "unassigned", "unassigned",
+  "","","","",
+  sep = ","
+)
+write(x = outstr, file = samplesheet, append = TRUE)
 
 # create barcode fasta files
 unique_groups <- unique(samples$group_name)
+
+si_file <- paste0(outdir, "/sampleindex.fa")
+i5_file <- paste0(outdir, "/tn5_i5.fa")
+i7_file <- paste0(outdir, "/tn5_i7.fa")
+
+# sample index
 for (i in seq_along(along.with = unique_groups)) {
   # create barcode fasta files for cutadapt
-  fa1 <- paste0(outdir, "/", unique_groups[i], "_i5.fa")
-  fa2 <- paste0(outdir, "/", unique_groups[i], "_i7.fa")
   samples_use <- samples[samples$group_name == unique_groups[i], ]
-  for (i in seq_len(length.out = nrow(x = samples_use))) {
-    write(x = paste0(">", samples_use[i, "sample_name"]), file = fa1, append = TRUE)
-    write(x = paste0(">", samples_use[i, "sample_name"]), file = fa2, append = TRUE)
-    write(x = samples_use[i, "i5_index"], file = fa1, append = TRUE)
-    write(x = samples_use[i, "i7_index"], file = fa2, append = TRUE)
+  
+  # write sample index fasta
+  if (!length(x = unique(x = samples_use$sample_index))) {
+    stop("Same samples listed with different sample barcodes. Check the configuration files.")
   }
+  si_use <- samples_use$sample_index[[1]]
+  si_use <- unlist(x = strsplit(x = si_use, split = ","))
+  for (j in seq_along(along.with = si_use)) {
+    write(x = paste0(">", unique_groups[i]), file = si_file, append = TRUE)
+    write(x = si_use[[j]], file = si_file, append = TRUE)
+  }
+}
+
+# tn5 barcodes
+for (i in seq_len(length.out = nrow(x = samples))) {
+  samples_use <- samples[i, ]
+  write(x = paste0(">", samples_use$sample_name), file = i5_file, append = TRUE)
+  write(x = samples_use$i5_index, file = i5_file, append = TRUE)
+  write(x = paste0(">", samples_use$sample_name), file = i7_file, append = TRUE)
+  write(x = samples_use$i7_index, file = i7_file, append = TRUE)
 }
