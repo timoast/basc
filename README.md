@@ -16,18 +16,21 @@ each sample.
 Example `samples.tsv` file:
 
 ```
-sample_name	i5_index	i7_index	sample_index
-H3K27me3	AAAAAAAA	AAAAAAAA	AAAAAAAA
-H3K27ac	AAAAAAAA	AAAAAAAA	AAAAAAAA
-S2S5P	AAAAAAAA	AAAAAAAA	AAAAAAAA
+group_name	sample_name	i5_index	i7_index	sample_index
+whole_cell	H3K27me3	GGATTGCT	AACAACAC	GGACTCCT,TAGGCATG
+whole_cell	H3K27ac	GTGTGACC	ACGTATGG	GGACTCCT,TAGGCATG
+whole_cell	S2S5P	cCGTCTATG	gAACATTCC	GGACTCCT,TAGGCATG
 ```
 
 Example `config.yaml` file:
 
 ```
-reference: path/to/reference
+reference: path/to/bwa-mem2/reference.fa
 samples: config/samples.tsv
 reads: path/to/runfolder
+name: <experiment_name>
+reverse_complement: true
+outdir: path/to/output
 ```
 
 Execute the snakemake workflow:
@@ -39,9 +42,8 @@ snakemake -j 12
 # Steps
 
 1. Barcode fasta and sample sheet are generated from the config file
-2. BCL converstion to fastq files using `bcl2fastq`. Demultiplex based on sample index.
-3. Combinatorial barcode demultiplexing using `cutadapt`
-4. Extraction of cell barcode using `sinto`
-5. Map reads to the genome using `bwa-mem2`
-6. BAM file sorted and indexed using `samtools`
-7. Fragment file created using `sinto`
+2. BCL converstion to fastq files using `bcl2fastq`  
+3. Combinatorial barcode demultiplexing using a custom python script  
+4. Map reads to the genome using `bwa-mem2`
+5. BAM file sorted and indexed using `samtools`
+6. Fragment file created using `sinto`
