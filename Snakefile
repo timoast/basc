@@ -84,16 +84,6 @@ rule bcl2fastq:
            {params.rundir}/fastq/unassigned_S1_L004_R4_001.fastq.gz
         """
 
-## After BCL conversion:
-# R1 = genomic read 1
-# R2 = Tn5 barcode 1, intervening sequence (15), sample index
-# R3 (novaseq) = Cell barcode (16), intervening sequence (14), Tn5 barcode 2
-# R3 (nextseq) = Tn5 barcode 2, intervening sequence (14), cell barcode (16)
-# R4 = genomic read 2
-
-# i7 intervening seq: CCGAGCCCACGAGAC
-# i5 intervening seq: AGCAGCCGTCGCAG
-
 rule demux:
     input:
         read1="{}/fastq/unassigned_R1.fastq.gz".format(config['reads']),
@@ -108,6 +98,7 @@ rule demux:
     threads: 1
     shell:
         """
+        # TODO: don't cat lanes, demux each lane in parallel. Should be 4x faster
         python scripts/demux.py \
           --read1 {input.read1} \
           --read2 {input.read2} \
@@ -120,23 +111,29 @@ rule demux:
         """
 
 rule map:
-    input:
-        genome=config['reference'],
-        dir=directory("{}/demux".format(config['outdir']))
+    input: dir=directory("{}/demux".format(config['outdir']))
     output: directory("{}/mapped".format(config['outdir']))
     message: "Map reads to genome"
+    params:
+        group=unique_groups,
+        genome=config['reference']
     threads: 24
     shell:
         """
-        
-        # get all conditions
-        
-        # iterate over fastq file pairs and map
-        
-        bwa-mem2 mem {input.genome}  \
-          | samtools sort - > aln.bam
-
-        samtools index ...
+        mkdir {output}
+        for i in {params.group}; do
+            cd {input}/$i
+            mkdir {output}/$i
+            for R1 in $(ls -d *.R1.fastq); do
+                fname=${{R1%.R1.fastq}}
+                R2=$fname.R2.fastq
+                bwa-mem2 mem -t {threads} {params.genome} $R1 $R2 \
+                | samtools sort -@ {threads} -O bam - \
+                > "{output}/"$i"/"$fname".bam"
+                samtools index -@ {threads} "{output}/"$i"/"$fname".bam"
+            done
+            cd -
+        done
         """
 
 # rule fragments:
