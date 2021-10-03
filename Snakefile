@@ -151,12 +151,12 @@ rule fragments:
         for i in {params[0]}; do
             cd {input}/$i
             mkdir {output}/$i
-            for bam in $(ls -d *.bam$); do
+            for bam in $(ls -d *.bam); do
                 fname=${{bam%.bam}}
-                sinto fragments -b $bam --barcode_regex "[^:]*" -f {output}/$i/$fname.tmp
+                sinto fragments -p {threads} -b $bam --barcode_regex "[^:]*" -f {output}/$i/$fname.tmp
                 sort -k1,1 -k2,2n {output}/$i/$fname.tmp > {output}/$i/$fname.tsv
                 bgzip -@ {threads} {output}/$i/$fname.tsv
-                tabix index -p bed {output}/$i/$fname.tsv.gz
+                tabix -p bed {output}/$i/$fname.tsv.gz
                 rm {output}/$i/$fname.tmp
             done
             cd -
