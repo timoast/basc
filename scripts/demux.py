@@ -99,6 +99,9 @@ while True:
     r3_entry = get_entry(r3)
     r4_entry = get_entry(r4)
     
+    if r1_entry[0] == '':
+        break
+    
     # get barcodes
     i7_barcodes = extract_barcodes(sequence=r2_entry[1], adapter="CGAGAC", full_adapter_len=15, bc2_len=8)
     i5_barcodes = extract_barcodes(sequence=r3_entry[1], adapter="CGACGA", full_adapter_len=14, bc2_len=16)
