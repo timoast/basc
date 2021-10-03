@@ -1,4 +1,4 @@
-reference: hg38
+reference: /home/stuartt/data/GRCh38.p13/bwa-mem2/GRCh38.p13.genome.fa.gz
 samples: config/samples.tsv
 reads: /home/stuartt/data/210924_NB552173_0145_AHVTNNBGXH
 name: NTT
