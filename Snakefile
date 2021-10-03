@@ -4,6 +4,9 @@ configfile: "config.yaml"
 samples = pd.read_csv(config["samples"], sep="\t")
 unique_groups = list(set(samples['group_name'].to_list()))
 
+rule all:
+    input: directory("{}/fragments".format(config['outdir']))
+
 rule create_samplesheet:
     output:
         "{}_barcodes/samplesheet.csv".format(config['name']),
@@ -136,15 +139,26 @@ rule map:
         done
         """
 
-# rule fragments:
-#     input:
-#     output:
-#     message: "Create fragment file"
-#     threads: 12
-#     shell:
-#         """
-#         sinto fragment -b {input}
-#         sort -k1,1 -k2,2n 
-#         bgzip -@ {threads}
-#         tabix index -p bed 
-#         """
+rule fragments:
+    input: directory("{}/mapped".format(config['outdir']))
+    output: directory("{}/fragments".format(config['outdir']))
+    message: "Create fragment file"
+    params: unique_groups
+    threads: 12
+    shell:
+        """
+        mkdir {output}
+        for i in {params[0]}; do
+            cd {input}/$i
+            mkdir {output}/$i
+            for bam in $(ls -d *.bam$); do
+                fname=${{bam%.bam}}
+                sinto fragments -b $bam --barcode_regex "[^:]*" -f {output}/$i/$fname.tmp
+                sort -k1,1 -k2,2n {output}/$i/$fname.tmp > {output}/$i/$fname.tsv
+                bgzip -@ {threads} {output}/$i/$fname.tsv
+                tabix index -p bed {output}/$i/$fname.tsv.gz
+                rm {output}/$i/$fname.tmp
+            done
+            cd -
+        done
+        """
