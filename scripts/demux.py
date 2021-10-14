@@ -17,6 +17,7 @@ parser.add_argument('--read4', help='Path to read4')
 parser.add_argument('--sampleindex', help='Path to sample index FASTA file')
 parser.add_argument('--tn5_i5', help='Path to Tn5 i5 index FASTA file')
 parser.add_argument('--tn5_i7', help='Path to Tn5 i7 index FASTA file')
+parser.add_argument('--min_barcode_len', help='Minimum length of cell barcode', default=16, type=int)
 parser.add_argument('--output', help='Path to output directory')
 args = parser.parse_args()
 
@@ -124,25 +125,25 @@ while True:
         sample_index_name = "unknown"
 
     cell_barcode = i5_barcodes[1]
+    if len(cell_barcode) >= args.min_barcode_len:
+        # add cell barcode to r1 and r2 genomic
+        r1_entry[0] = "@" + cell_barcode + ":" + r1_entry[0][1:]
+        r4_entry[0] = "@" + cell_barcode + ":" + r4_entry[0][1:]
+        
+        # write to correct output files based on barcode combination
+        outfile = i5_index_name + "-" + i7_index_name + "-" + sample_index_name
+        r1_outf = outf[outfile][0]
+        r2_outf = outf[outfile][1]
+        
+        r1_outf.write(r1_entry[0])
+        r1_outf.write(r1_entry[1])
+        r1_outf.write(r1_entry[2])
+        r1_outf.write(r1_entry[3])
     
-    # add cell barcode to r1 and r2 genomic
-    r1_entry[0] = "@" + cell_barcode + ":" + r1_entry[0][1:]
-    r4_entry[0] = "@" + cell_barcode + ":" + r4_entry[0][1:]
-    
-    # write to correct output files based on barcode combination
-    outfile = i5_index_name + "-" + i7_index_name + "-" + sample_index_name
-    r1_outf = outf[outfile][0]
-    r2_outf = outf[outfile][1]
-    
-    r1_outf.write(r1_entry[0])
-    r1_outf.write(r1_entry[1])
-    r1_outf.write(r1_entry[2])
-    r1_outf.write(r1_entry[3])
-
-    r2_outf.write(r4_entry[0])
-    r2_outf.write(r4_entry[1])
-    r2_outf.write(r4_entry[2])
-    r2_outf.write(r4_entry[3])
+        r2_outf.write(r4_entry[0])
+        r2_outf.write(r4_entry[1])
+        r2_outf.write(r4_entry[2])
+        r2_outf.write(r4_entry[3])
     x += 1
     if x % 1e6 == 0:
         print("Processed " + str(int(x/1e6)) + " million reads", file=sys.stderr, end="\r")

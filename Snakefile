@@ -110,6 +110,7 @@ rule demux:
           --sampleindex {input.sampleindex} \
           --tn5_i5 {input.tn5_i5} \
           --tn5_i7 {input.tn5_i7} \
+          --min_barcode_len 14 \
           --output {output}
         """
 
