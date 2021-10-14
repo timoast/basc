@@ -36,6 +36,7 @@ outdir: path/to/output
 Execute the snakemake workflow:
 
 ```
+conda activate basc
 snakemake -j 12
 ```
 
