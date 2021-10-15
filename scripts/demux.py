@@ -126,9 +126,10 @@ while True:
 
     cell_barcode = i5_barcodes[1]
     if len(cell_barcode) >= args.min_barcode_len:
-        # add cell barcode to r1 and r2 genomic
-        r1_entry[0] = "@" + cell_barcode + ":" + r1_entry[0][1:]
-        r4_entry[0] = "@" + cell_barcode + ":" + r4_entry[0][1:]
+        # add barcodes to r1 and r2 genomic
+        bc_combination = "@" + i5_barcodes[0] + "+" + i7_barcodes[0] + "+" + cell_barcode + ":"
+        r1_entry[0] = bc_combination + r1_entry[0][1:]
+        r4_entry[0] = bc_combination + r4_entry[0][1:]
         
         # write to correct output files based on barcode combination
         outfile = i5_index_name + "-" + i7_index_name + "-" + sample_index_name
@@ -153,7 +154,6 @@ for i in outf.keys():
     outf[i][0].close()
     outf[i][1].close()
 
-# another option is to only split by sample index, but add the tn5 barcode combination to the read name also
+# another option is to only split by sample index
 # can then map one set of fastqs per sample index, and extract the fragment information from the read name
-# would need to modify the fragment function to get the extra information
-# in the end we want one fragment file per condition anyway, unless we want to modify the fragment file format to add metadata column (would need to change a lot)
+# would need to modify the fragment function in sinto
