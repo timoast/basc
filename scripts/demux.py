@@ -44,17 +44,19 @@ def get_entry(f):
     return([f.readline(), f.readline(), f.readline(), f.readline()])
 
 
-def extract_barcodes(sequence, adapter, full_adapter_len, bc2_len):
+def extract_barcodes(sequence, adapter, full_adapter_len, bc1_len, bc2_len):
     # return first 9 bp as tn5_bc, remove next 15 bp (adaptor), then return remaining as sample index
-    tn5_bc = sequence[:8]
-    trimmed = sequence[9:]
-    si = trimmed.split(adapter)
-    if len(si) == 1:
+    tn5_bc = sequence[:bc1_len]
+    trimmed = sequence[bc1_len+1:]
+    idx_match = trimmed.find(adapter)
+    if idx_match == -1:
+        # not found
         si = trimmed[full_adapter_len:][:-1] # remove trailing \n
     else:
-        si = si[1][:-1]
+        si = trimmed[idx_match+len(adapter):][:-1] # remove trailing \n
+        if len(si) > bc2_len:
+            si = si[:bc2_len]
     return((tn5_bc, si))
-
 
 
 tn5_i5_barcodes = get_barcodes(args.tn5_i5, maxlen=8) # using first 8 bases of barcode
@@ -104,8 +106,8 @@ while True:
         break
     
     # get barcodes
-    i7_barcodes = extract_barcodes(sequence=r2_entry[1], adapter="CGAGAC", full_adapter_len=15, bc2_len=8)
-    i5_barcodes = extract_barcodes(sequence=r3_entry[1], adapter="CGACGA", full_adapter_len=14, bc2_len=16)
+    i7_barcodes = extract_barcodes(sequence=r2_entry[1], adapter="CGAGAC", full_adapter_len=15, bc1_len=8, bc2_len=8)
+    i5_barcodes = extract_barcodes(sequence=r3_entry[1], adapter="CGACGA", full_adapter_len=14, bc1_len=8, bc2_len=16)
     
     # match to list of valid barcodes
     # if no match, classify as unknown
