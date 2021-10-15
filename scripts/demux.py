@@ -136,15 +136,8 @@ while True:
         r1_outf = outf[outfile][0]
         r2_outf = outf[outfile][1]
         
-        r1_outf.write(r1_entry[0])
-        r1_outf.write(r1_entry[1])
-        r1_outf.write(r1_entry[2])
-        r1_outf.write(r1_entry[3])
-    
-        r2_outf.write(r4_entry[0])
-        r2_outf.write(r4_entry[1])
-        r2_outf.write(r4_entry[2])
-        r2_outf.write(r4_entry[3])
+        r1_outf.write("".join(r1_entry))
+        r2_outf.write("".join(r4_entry))
     x += 1
     if x % 1e6 == 0:
         print("Processed " + str(int(x/1e6)) + " million reads", file=sys.stderr, end="\r")
