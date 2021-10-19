@@ -101,14 +101,14 @@ while True:
     r2_entry = get_entry(r2)
     r3_entry = get_entry(r3)
     r4_entry = get_entry(r4)
-    
+
     if r1_entry[0] == '':
         break
-    
+
     # get barcodes
     i7_barcodes = extract_barcodes(sequence=r2_entry[1], adapter="CGAGAC", full_adapter_len=15, bc1_len=8, bc2_len=8)
     i5_barcodes = extract_barcodes(sequence=r3_entry[1], adapter="CGACGA", full_adapter_len=14, bc1_len=8, bc2_len=16)
-    
+
     # match to list of valid barcodes
     # if no match, classify as unknown
     if i7_barcodes[0] in tn5_i7_barcodes:
@@ -120,7 +120,7 @@ while True:
         i5_index_name = tn5_i5_barcodes[i5_barcodes[0]]
     else:
         i5_index_name = "unknown"
-    
+
     if i7_barcodes[1] in sample_barcodes:
         sample_index_name = sample_barcodes[i7_barcodes[1]]
     else:
@@ -129,21 +129,21 @@ while True:
     cell_barcode = i5_barcodes[1]
     if len(cell_barcode) >= args.min_barcode_len:
         # add barcodes to r1 and r2 genomic
-        bc_combination = "@" + i5_barcodes[0] + "+" + i7_barcodes[0] + "+" + cell_barcode + ":"
+        bc_combination = "@" + cell_barcode + ":" + i5_barcodes[0] + "+" + i7_barcodes[0] + "+"
         r1_entry[0] = bc_combination + r1_entry[0][1:]
         r4_entry[0] = bc_combination + r4_entry[0][1:]
-        
+
         # write to correct output files based on barcode combination
         outfile = i5_index_name + "-" + i7_index_name + "-" + sample_index_name
         r1_outf = outf[outfile][0]
         r2_outf = outf[outfile][1]
-        
+
         r1_outf.write("".join(r1_entry))
         r2_outf.write("".join(r4_entry))
     x += 1
     if x % 1e6 == 0:
         print("Processed " + str(int(x/1e6)) + " million reads", file=sys.stderr, end="\r")
-    
+
 # close all files
 for i in outf.keys():
     outf[i][0].close()
