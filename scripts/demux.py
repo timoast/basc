@@ -82,20 +82,8 @@ r2 = open_fastq(f=args.read2)
 r3 = open_fastq(f=args.read3)
 r4 = open_fastq(f=args.read4)
 
-# tn5_i5_barcodes = get_barcodes("./NTT_barcodes/tn5_i5.fa", maxlen=8)
-# tn5_i7_barcodes = get_barcodes("./NTT_barcodes/tn5_i7.fa", maxlen=8)
-# sample_barcodes = read_sample_barcodes("./NTT_barcodes/sampleindex.fa", maxlen=8)
-
-# r1 = open_fastq(f="/home/stuartt/data/210924_NB552173_0145_AHVTNNBGXH/fastq/unassigned_R1.fastq.gz")
-# r2 = open_fastq("/home/stuartt/data/210924_NB552173_0145_AHVTNNBGXH/fastq/unassigned_R2.fastq.gz")
-# r3 = open_fastq("/home/stuartt/data/210924_NB552173_0145_AHVTNNBGXH/fastq/unassigned_R3.fastq.gz")
-# r4 = open_fastq("/home/stuartt/data/210924_NB552173_0145_AHVTNNBGXH/fastq/unassigned_R4.fastq.gz")
-
 # create dictionary with file handles
-# key = barcode combination
-# value = file handle
 outf = dict()
-# outpath = Path("./test")
 outpath = Path(args.output)
 if not outpath.exists():
     os.mkdir(outpath)
@@ -156,7 +144,6 @@ while True:
     cell_barcode = i5_barcodes[1]
     if len(cell_barcode) >= args.min_barcode_len:
         # add barcodes to r1 and r2 genomic
-        # need to include well information here
         bc_combination = "@" + cell_barcode + "-" + well + ":" + i5_barcodes[0] + "+" + i7_barcodes[0] + "+"
         r1_entry[0] = bc_combination + r1_entry[0][1:]
         r4_entry[0] = bc_combination + r4_entry[0][1:]
