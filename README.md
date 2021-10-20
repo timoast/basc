@@ -16,10 +16,10 @@ each sample.
 Example `samples.tsv` file:
 
 ```
-group_name	sample_name	i5_index	i7_index	sample_index
-whole_cell	H3K27me3	GGATTGCT	AACAACAC	GGACTCCT,TAGGCATG
-whole_cell	H3K27ac	GTGTGACC	ACGTATGG	GGACTCCT,TAGGCATG
-whole_cell	S2S5P	cCGTCTATG	gAACATTCC	GGACTCCT,TAGGCATG
+sample_name	well	mark  i5_index	i7_index	sample_index
+whole_cell	1	H3K27me3  GGATTGCT	AACAACAC	GGACTCCT,TAGGCATG
+whole_cell	1	H3K27ac GTGTGACC	ACGTATGG	GGACTCCT,TAGGCATG
+whole_cell	1	S2S5P cCGTCTATG	gAACATTCC	GGACTCCT,TAGGCATG
 ```
 
 Example `config.yaml` file:
