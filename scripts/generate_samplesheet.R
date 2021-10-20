@@ -10,7 +10,7 @@ samplepath <- args[1]
 samplename <- args[2]
 rc <- args[3]
 
-samples <- read.table(samplepath, sep = "\t", header = TRUE)
+samples <- read.table(samplepath, header = TRUE)
 
 if (rc == "True") {
   message("Reverse complementing barcodes")
@@ -51,7 +51,7 @@ outstr <- paste(
 write(x = outstr, file = samplesheet, append = TRUE)
 
 # create barcode fasta files
-unique_groups <- unique(samples$group_name)
+unique_groups <- unique(samples$sample_name)
 
 si_file <- paste0(outdir, "/sampleindex.fa")
 i5_file <- paste0(outdir, "/tn5_i5.fa")
@@ -59,10 +59,7 @@ i7_file <- paste0(outdir, "/tn5_i7.fa")
 
 # sample index
 for (i in seq_along(along.with = unique_groups)) {
-  # create barcode fasta files for cutadapt
-  samples_use <- samples[samples$group_name == unique_groups[i], ]
-  
-  # write sample index fasta
+  samples_use <- samples[samples$sample_name == unique_groups[i], ]
   if (!length(x = unique(x = samples_use$sample_index))) {
     stop("Same samples listed with different sample barcodes. Check the configuration files.")
   }
@@ -75,10 +72,12 @@ for (i in seq_along(along.with = unique_groups)) {
 }
 
 # tn5 barcodes
+# write mark and well combination
 for (i in seq_len(length.out = nrow(x = samples))) {
   samples_use <- samples[i, ]
-  write(x = paste0(">", samples_use$sample_name), file = i5_file, append = TRUE)
+  comb <- paste0(">", samples_use$sample_name, "+", samples_use$well, "+", samples_use$mark)
+  write(x = comb, file = i5_file, append = TRUE)
   write(x = samples_use$i5_index, file = i5_file, append = TRUE)
-  write(x = paste0(">", samples_use$sample_name), file = i7_file, append = TRUE)
+  write(x = comb, file = i7_file, append = TRUE)
   write(x = samples_use$i7_index, file = i7_file, append = TRUE)
 }

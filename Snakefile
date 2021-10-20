@@ -2,7 +2,7 @@ import pandas as pd
 
 configfile: "config.yaml"
 samples = pd.read_csv(config["samples"], sep="\t")
-unique_groups = list(set(samples['group_name'].to_list()))
+unique_groups = list(set(samples['sample_name'].to_list()))
 
 rule all:
     input: directory("{}/fragments".format(config['outdir']))
@@ -54,6 +54,7 @@ rule bcl2fastq:
           --sample-sheet={input}
          
         # collapse lanes
+        # TODO can use --no-lane-split instead
         # read1
         cat {params.rundir}/fastq/unassigned_S1_L001_R1_001.fastq.gz {params.rundir}/fastq/unassigned_S1_L002_R1_001.fastq.gz {params.rundir}/fastq/unassigned_S1_L003_R1_001.fastq.gz {params.rundir}/fastq/unassigned_S1_L004_R1_001.fastq.gz > {output.read1}
 
@@ -102,6 +103,7 @@ rule demux:
     shell:
         """
         # TODO: don't cat lanes, demux each lane in parallel. Should be 4x faster
+        # TODO: add option to have only one tn5 index, not dual index
         python scripts/demux.py \
           --read1 {input.read1} \
           --read2 {input.read2} \
