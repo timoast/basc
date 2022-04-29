@@ -1,6 +1,6 @@
 import pandas as pd
 
-configfile: "config.yaml"
+configfile: "config.example"
 samples = pd.read_csv(config["samples"], sep="\t")
 unique_groups = list(set(samples['sample_name'].to_list()))
 
