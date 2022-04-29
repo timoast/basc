@@ -131,6 +131,10 @@ dmypy.json
 # R
 .Rproj.user
 *.Rproj
+.Rhistory
+
+# snakemake
+.snakemake
 
 # config files
 *config.yaml
