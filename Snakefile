@@ -27,6 +27,16 @@ rule create_fasta:
             {params.revcomp_i7}
         """
 
+rule index_genome:
+    message: "Building bwa-mem2 genome index"
+    params:
+        genome=config['reference']
+    threads: 1
+    shell:
+        """
+        bwa-mem2 index {params.genome}
+        """
+
 rule demux:
     input:
         read1="{}/{}.fastq.gz".format(config['reads'], config['read1']),
