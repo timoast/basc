@@ -6,17 +6,24 @@
 args <- commandArgs(trailingOnly = TRUE)
 samplepath <- args[1]
 samplename <- args[2]
-rc <- args[3]
+rc_i5 <- args[3]
+rc_i7 <- args[4]
 
 samples <- read.table(samplepath, header = TRUE)
 outdir <- paste0(samplename, "_barcodes")
 
-if (rc == "True") {
-  message("Reverse complementing barcodes")
+if (rc_i5 == "True") {
+  message("Reverse complementing i5 barcodes")
   revcomp <- function(x) {
     return(as.character(Biostrings::reverseComplement(Biostrings::DNAString(x))))
   }
   samples$i5_index <- unname(sapply(samples$i5_index, revcomp))
+}
+if (rc_i7 == "True") {
+  message("Reverse complementing i7 barcodes")
+  revcomp <- function(x) {
+    return(as.character(Biostrings::reverseComplement(Biostrings::DNAString(x))))
+  }
   samples$i7_index <- unname(sapply(samples$i7_index, revcomp))
 }
 
@@ -30,8 +37,14 @@ i7_file <- paste0(outdir, "/tn5_i7.fa")
 if (!dir.exists(paths = outdir)) {
   dir.create(path = outdir)
 } else {
-  if (file.exists(samplesheet)) {
-    file.remove(samplesheet)
+  if (file.exists(si_file)) {
+    file.remove(si_file)
+  }
+  if (file.exists(i5_file)) {
+    file.remove(i5_file)
+  }
+  if (file.exists(i7_file)) {
+    file.remove(i7_file)
   }
 }
 
