@@ -137,9 +137,7 @@ while True:
         else:
             i5_mark, well = "unknown", "unknown"
     else:
-        sample_index_name = "unknown"
-        i7_mark, well = "unknown", "unknown"
-        i5_mark, well = "unknown", "unknown"
+        sample_index_name, i5_mark, i7_mark, well = "unknown", "unknown", "unknown", "unknown"
 
     cell_barcode = i5_barcodes[1]
     if len(cell_barcode) >= args.min_barcode_len:
