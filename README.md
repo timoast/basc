@@ -49,12 +49,12 @@ snakemake --config reference=/path/to/reference name=NTT
 Create a tab-delimited file describing the barcode sequences that were used for
 each sample or assay. Example `samples.tsv` file:
 
-```
-sample_name	well	mark  i5_index	i7_index	sample_index
-whole_cell	1	H3K27me3  GGATTGCT	AACAACAC	GGACTCCT,TAGGCATG
-whole_cell	1	H3K27ac GTGTGACC	ACGTATGG	GGACTCCT,TAGGCATG
-whole_cell	1	S2S5P cCGTCTATG	gAACATTCC	GGACTCCT,TAGGCATG
-```
+| sample_name | well | mark | i5_index | i7_index | sample_index |
+| ----------- | ---- | ---- | -------- | -------- | ------------ |
+| whole_cell  |  1   | H3K27me3 | GGATTGCT | AACAACAC | GGACTCCT,TAGGCATG |
+| whole_cell  |  1   | H3K27ac | GTGTGACC | ACGTATGG | GGACTCCT,TAGGCATG |
+| whole_cell  |  1   | S2S5P | cCGTCTATG | gAACATTCC | GGACTCCT,TAGGCATG |
+
 
 ## Running the workflow
 
