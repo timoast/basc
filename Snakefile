@@ -14,12 +14,14 @@ rule create_fasta:
         "{}_barcodes/sampleindex.fa".format(config['name'])
     params:
         samples=config['samples'],
-        revcomp=config['reverse_complement']
+        revcomp=config['reverse_complement'],
+        samplename=config['name']
     message: "Generate barcode FASTA files"
     shell:
         """
         Rscript scripts/generate_fasta.R \
             {params.samples} \
+            {params.samplename} \
             {params.revcomp}
         """
 

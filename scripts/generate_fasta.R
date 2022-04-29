@@ -5,9 +5,11 @@
 
 args <- commandArgs(trailingOnly = TRUE)
 samplepath <- args[1]
-rc <- args[2]
+samplename <- args[2]
+rc <- args[3]
 
 samples <- read.table(samplepath, header = TRUE)
+outdir <- paste0(samplename, "_barcodes")
 
 if (rc == "True") {
   message("Reverse complementing barcodes")
@@ -24,6 +26,14 @@ unique_groups <- unique(samples$sample_name)
 si_file <- paste0(outdir, "/sampleindex.fa")
 i5_file <- paste0(outdir, "/tn5_i5.fa")
 i7_file <- paste0(outdir, "/tn5_i7.fa")
+
+if (!dir.exists(paths = outdir)) {
+  dir.create(path = outdir)
+} else {
+  if (file.exists(samplesheet)) {
+    file.remove(samplesheet)
+  }
+}
 
 # sample index
 for (i in seq_along(along.with = unique_groups)) {
