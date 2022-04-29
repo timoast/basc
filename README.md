@@ -1,16 +1,43 @@
-# basc
+# BASC: barcoded single-cell data processing pipeline.
 
-Barcoded single-cell data processing pipeline.
+BASC is a snakemake workflow for processing single-cell
+chromatin data containing multiple barcodes per sequenced
+fragment. Most single-cell chromatin datasets contain a single
+barcode (the cell barcode), and can be handled by other
+processing pipelines such as cellranger-atac, or simpler
+methods. This workflow is designed for experiments where
+there are 1 or 2 additional barcodes sequenced for each 
+DNA fragment, which may encode different information such 
+as the data modality measured by the DNA fragment, droplet
+combinatorial indexing well of origin, or both.
+
+## Installation
+
+The workflow is implemented using [Snakemake](https://snakemake.readthedocs.io),
+and contains several dependencies. These dependencies can be
+easily installed using conda (or [mamba](https://github.com/mamba-org/mamba)).
+
+To get started, clone the git repository:
+
+```
+git clone git@github.com:timoast/basc.git
+```
 
 To install dependencies in a new conda environment:
 
 ```
+# using conda
+conda env create -f env.yaml
+```
+
+```
+# using mamba
 mamba env create -f env.yaml
 ```
 
-# Configuring the `basc` pipeline
+## Configuring the BASC pipeline
 
-To configure `basc`, create a config file containing the barcode combinations for
+To configure BASC, create a config file containing the barcode combinations for
 each sample. See `config.example` for the list of required parameters in the config
 file. Alternatively, individual configuration parameters can be passed to snakemake
 on the command line, for example:
@@ -29,7 +56,7 @@ whole_cell	1	H3K27ac GTGTGACC	ACGTATGG	GGACTCCT,TAGGCATG
 whole_cell	1	S2S5P cCGTCTATG	gAACATTCC	GGACTCCT,TAGGCATG
 ```
 
-# Running the workflow
+## Running the workflow
 
 To execute the snakemake workflow first activate the conda environment
 containing all of the dependencies: `conda activate basc`. Next, run
@@ -47,9 +74,9 @@ snakemake --configfile /path/to/config -j 24
 See the [snakemake documentation](https://snakemake.readthedocs.io/en/stable/index.html)
 for more information about running snakemake and all the available options.
 
-# Workflow steps
+## Workflow steps
 
-The `basc` pipeline executes the following steps:
+The BASC pipeline executes the following steps:
 
 1. Barcode fasta and sample sheet are generated from the config file
 2. BCL converstion to fastq files using `bcl2fastq` 
