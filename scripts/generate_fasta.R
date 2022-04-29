@@ -1,14 +1,11 @@
 
-## Samplesheet and FASTA file generation
-# Generate one samplesheet for the run
 # Generate one set of FASTA files (i5 and i6) per sample index within the run
 # FASTA files named {group_name}_i5.fa and {group_name}_i7.fa
 # Optionally reverse complement sequences in the sample file
 
 args <- commandArgs(trailingOnly = TRUE)
 samplepath <- args[1]
-samplename <- args[2]
-rc <- args[3]
+rc <- args[2]
 
 samples <- read.table(samplepath, header = TRUE)
 
@@ -20,35 +17,6 @@ if (rc == "True") {
   samples$i5_index <- unname(sapply(samples$i5_index, revcomp))
   samples$i7_index <- unname(sapply(samples$i7_index, revcomp))
 }
-
-# create sample sheet containing sample index
-header <- paste0("[Header]
-Experiment Name,", samplename, "\n",
-"Date,", Sys.Date(), "\n",
-"Module,GenerateFASTQ - 2.0.0
-Workflow,GenerateFASTQ
-Library Prep Kit,Custom
-Chemistry,Amplicon
-[Data]
-Sample_ID,Description,I7_Index_ID,index,I5_Index_ID,index2,Sample_Project")
-
-outdir <- paste0(samplename, "_barcodes")
-samplesheet <- paste0(outdir, "/samplesheet.csv")
-if (!dir.exists(paths = outdir)) {
-  dir.create(path = outdir)
-} else {
-  if (file.exists(samplesheet)) {
-    file.remove(samplesheet)
-  }
-}
-# demux everything to unassigned
-write(x = header, file = samplesheet, append = TRUE)
-outstr <- paste(
-  "unassigned", "unassigned",
-  "","","","",
-  sep = ","
-)
-write(x = outstr, file = samplesheet, append = TRUE)
 
 # create barcode fasta files
 unique_groups <- unique(samples$sample_name)

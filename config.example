@@ -1,6 +1,10 @@
 reference: 
 samples: 
-reads: 
+reads:
+read1:
+read2:
+read3:
+read4:
 name:
 reverse_complement:
 outdir: 

@@ -78,9 +78,8 @@ for more information about running snakemake and all the available options.
 
 The BASC pipeline executes the following steps:
 
-1. Barcode fasta and sample sheet are generated from the config file
-2. BCL converstion to fastq files using `bcl2fastq` 
-3. Combinatorial barcode demultiplexing using a custom python script 
-4. Map reads to the genome using `bwa-mem2`
-5. BAM file sorted and indexed using `samtools`
-6. Fragment file created using `sinto`
+1. Barcode FASTA files are generated from the config file
+2. Combinatorial barcode demultiplexing using a custom python script 
+3. Map reads to the genome using `bwa-mem2`
+4. BAM file sorted and indexed using `samtools`
+5. Fragment file created using `sinto`
