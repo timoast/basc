@@ -14,7 +14,8 @@ rule create_fasta:
         "{}_barcodes/sampleindex.fa".format(config['name'])
     params:
         samples=config['samples'],
-        revcomp=config['reverse_complement'],
+        revcomp_i5=config['reverse_complement_i5'],
+        revcomp_i7=config['reverse_complement_i7'],
         samplename=config['name']
     message: "Generate barcode FASTA files"
     shell:
@@ -22,7 +23,8 @@ rule create_fasta:
         Rscript scripts/generate_fasta.R \
             {params.samples} \
             {params.samplename} \
-            {params.revcomp}
+            {params.revcomp_i5} \
+            {params.revcomp_i7}
         """
 
 rule demux:
@@ -68,7 +70,7 @@ rule map:
             for R1 in $(ls -d *.R1.fastq); do
                 fname=${{R1%.R1.fastq}}
                 R2=$fname.R2.fastq
-                bwa-mem2 mem -t {threads} {params.genome} $R1 $R2 \
+                bwa-mem2 mem -t {threads} -C {params.genome} $R1 $R2 \
                 | samtools sort -@ {threads} -O bam - \
                 > "{output}/"$i"/"$fname".bam"
                 samtools index -@ {threads} "{output}/"$i"/"$fname".bam"
@@ -91,7 +93,7 @@ rule fragments:
             mkdir {output}/$i
             for bam in $(ls -d *.bam); do
                 fname=${{bam%.bam}}
-                sinto fragments -p {threads} -b $bam --barcode_regex "[^:]*" -f {output}/$i/$fname.tmp
+                sinto fragments -p {threads} -b $bam -f {output}/$i/$fname.tmp
                 sort -k1,1 -k2,2n {output}/$i/$fname.tmp > {output}/$i/$fname.tsv
                 bgzip -@ {threads} {output}/$i/$fname.tsv
                 tabix -p bed {output}/$i/$fname.tsv.gz
