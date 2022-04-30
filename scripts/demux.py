@@ -82,6 +82,7 @@ def extract_barcodes(sequence, adapter, full_adapter_len, bc1_len, bc2_len):
             si = si[:bc2_len]
     return((tn5_bc, si))
 
+
 def extract_barcodes_simple(sequence, bc1_len=8, spacer_len=14):
     # version with fixed-length barcodes
     sequence = sequence.strip("\n")
@@ -187,10 +188,10 @@ while True:
     cell_barcode = i5_barcodes[1]
     if len(cell_barcode) >= args.min_barcode_len:
         # add barcodes to r1 and r2 genomic
-        cb = " CB:Z:" + cell_barcode + "-" + well
-        tb = " TB:Z:" + i5_barcodes[0] + "+" + i7_barcodes[0] + "\n"
-        r1_entry[0] = r1_entry[0].strip("\n") + cb + tb
-        r4_entry[0] = r4_entry[0].strip("\n") + cb + tb
+        cb = "\tCB:Z:" + cell_barcode + "-" + well
+        tb = "\tTB:Z:" + i5_barcodes[0] + "+" + i7_barcodes[0] + "\n"
+        r1_entry[0] = r1_entry[0].split()[0] + cb + tb
+        r4_entry[0] = r4_entry[0].split()[0] + cb + tb
         
         if sample_index_name == "unknown":
             r1_outf = outf['unknown'][0]
