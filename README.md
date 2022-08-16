@@ -46,15 +46,21 @@ on the command line, for example:
 snakemake --config reference=/path/to/reference name=NTT
 ```
 
-Create a tab-delimited file describing the barcode sequences that were used for
-each sample or assay. Example `samples.tsv` file:
+Create a tab-delimited `splitcode` configuration file describing the barcode
+sequences that were used for each condition, their location, and the
+Hamming distance to tolerate. Example `splitcode.tsv` file:
 
-| sample_name | well | mark | i5_index | i7_index | sample_index |
-| ----------- | ---- | ---- | -------- | -------- | ------------ |
-| whole_cell  |  1   | H3K27me3 | GGATTGCT | AACAACAC | GGACTCCT,TAGGCATG |
-| whole_cell  |  2   | H3K27ac | GTGTGACC | ACGTATGG | GGACTCCT,TAGGCATG |
-| nuclei  |  1   | S2S5P | CGTCTATG | AACATTCC | CACATCGG,GGTTGGCA |
+<!-- | sample_name | mark | i5_index | i7_index | sample_index |
+| ----------- | ---- | -------- | -------- | ------------ |
+| whole_cell  | H3K27me3 | GGATTGCT | AACAACAC | GGACTCCT,TAGGCATG |
+| whole_cell  | H3K27ac | GTGTGACC | ACGTATGG | GGACTCCT,TAGGCATG |
+| nuclei      | S2S5P | CGTCTATG | AACATTCC | CACATCGG,GGTTGGCA | -->
 
+| groups  | ids      | tags      | distances |    locations
+| bc1     | H3K27me3 | GTGTTGTT  |  2        | 0:0:8
+| bc1     | H3K27ac  | AGCATGTG  |  2        | 0:0:8
+| bc2     | H3K27ac  | ACGCTCAC  |  2        | 1:0:8
+| bc2     | H3K27me3 | AGCAATCC  |  2        | 1:0:8
 
 ## Running the workflow
 
@@ -78,8 +84,7 @@ for more information about running snakemake and all the available options.
 
 The BASC pipeline executes the following steps:
 
-1. Barcode FASTA files are generated from the config file
-2. Combinatorial barcode demultiplexing using a custom python script 
-3. Map reads to the genome using `bwa-mem2`
-4. BAM file sorted and indexed using `samtools`
-5. Fragment file created using `sinto`
+1. Barcode extraction using [`splitcode`](https://github.com/Yenaled/splitcode)
+2. Map reads to the genome using [`bwa-mem2`](https://github.com/bwa-mem2/bwa-mem2)
+3. BAM file sorted and indexed using [`samtools`](https://github.com/samtools/samtools)
+4. Fragment file created using [`sinto`](https://github.com/timoast/sinto)
