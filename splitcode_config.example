@@ -1,0 +1,5 @@
+groups	ids	tags	distances	locations
+bc1	H3K27me3	GTGTTGTT	2	0:0:8
+bc1	H3K27ac	AGCATGTG	2	0:0:8
+bc2	H3K27ac	ACGCTCAC	2	1:0:8
+bc2	H3K27me3	AGCAATCC	2	1:0:8

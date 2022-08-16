@@ -57,6 +57,7 @@ Hamming distance to tolerate. Example `splitcode.tsv` file:
 | nuclei      | S2S5P | CGTCTATG | AACATTCC | CACATCGG,GGTTGGCA | -->
 
 | groups  | ids      | tags      | distances |    locations
+| ------- | -------- | --------- | --------- | ----------
 | bc1     | H3K27me3 | GTGTTGTT  |  2        | 0:0:8
 | bc1     | H3K27ac  | AGCATGTG  |  2        | 0:0:8
 | bc2     | H3K27ac  | ACGCTCAC  |  2        | 1:0:8
