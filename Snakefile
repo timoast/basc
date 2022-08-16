@@ -38,7 +38,7 @@ rule splitcode_extract:
     threads: 12
     shell:
         """
-        /home/stuartt/github/splitcode/build/src/splitcode \
+        splitcode \
           -t {threads} \
           --config={params.cfg} \
           --seq-names \
