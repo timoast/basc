@@ -52,6 +52,7 @@ rule splitcode_extract:
           --mod-names \
           --keep-grp=<(echo {params.keep}) \
           --select=2,3 \
+          --sam-tags=TB:Z:,CB:Z: \
           {input.index1} {input.index2} {input.read1} {input.read2}
         """
 
@@ -82,13 +83,13 @@ rule map:
 #     input:
 #         bam="{}/mapped/aln.bam".format(config['outdir']),
 #         samples=config['samples']
-#     output: directory("{}/fragments/".format(config['outdir'], ))
+#     output: directory("{}/fragments".format(config['outdir']))
 #     message: "Create fragment files"
 #     threads: 12
 #     shell:
 #         """
 #         mkdir {output}
-#         sinto fragments -p {threads} -b {input.bam} -f {output} -t RX --header  # TODO create split parameter for sinto
+#         sinto fragments -p {threads} -b {input.bam} -f {output} --header --splitcode  # TODO create split parameter for sinto
 #         cd {output}
 #         for ...
 #         # TODO sort, compress, index each fragment file
