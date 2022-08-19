@@ -79,18 +79,29 @@ rule map:
         samtools index -@ {threads} {output}
         """
 
-# rule fragments:
-#     input:
-#         bam="{}/mapped/aln.bam".format(config['outdir']),
-#         samples=config['samples']
-#     output: directory("{}/fragments".format(config['outdir']))
-#     message: "Create fragment files"
-#     threads: 12
-#     shell:
-#         """
-#         mkdir {output}
-#         sinto fragments -p {threads} -b {input.bam} -f {output} --header --splitcode  # TODO create split parameter for sinto
-#         cd {output}
-#         for ...
-#         # TODO sort, compress, index each fragment file
-#         """
+rule fragments:
+    input:
+        bam="{}/mapped/aln.bam".format(config['outdir']),
+        samples=config['samples']
+    output: directory("{}/fragments".format(config['outdir']))
+    message: "Create fragment files"
+    threads: 12
+    shell:
+        """
+        mkdir {output}
+        sinto fragments \
+          -p {threads} \
+          -b {input.bam} \
+          -f {output} \
+          --header \
+          --split \
+          --collapse_within
+        
+        cd {output}
+        for fragfile in *.tsv; do
+          fname=(${fragfile//.tsv/ })
+          sinto sort -i $fragfile -o $fname.bed
+          bgzip -@ {threads} $fname.bed
+          tabix -p bed $fname.bed.gz
+        done
+        """
