@@ -5,9 +5,9 @@ if len(config) == 0:
     print("Please supply a configuration using --configfile", file=sys.stderr)
     sys.exit()
 
+
 rule all:
-    input: "{}/mapped/aln.bam".format(config['outdir'])
-    # input: directory("{}/fragments".format(config['outdir']))
+    input: directory("{}/fragments".format(config['outdir']))
 
 
 rule index_genome:
@@ -35,7 +35,7 @@ rule splitcode_extract:
         cb=config['cb'],
         keep=config['keep_group']
     message: "Extract barcodes from index reads"
-    threads: 12
+    threads: 24
     shell:
         """
         splitcode \
@@ -80,18 +80,16 @@ rule map:
         """
 
 rule fragments:
-    input:
-        bam="{}/mapped/aln.bam".format(config['outdir']),
-        samples=config['samples']
+    input: "{}/mapped/aln.bam".format(config['outdir'])
     output: directory("{}/fragments".format(config['outdir']))
     message: "Create fragment files"
-    threads: 12
+    threads: 24
     shell:
         """
         mkdir {output}
         sinto fragments \
           -p {threads} \
-          -b {input.bam} \
+          -b {input} \
           -f {output} \
           --header \
           --split \
@@ -99,7 +97,7 @@ rule fragments:
         
         cd {output}
         for fragfile in *.tsv; do
-          fname=(${fragfile//.tsv/ })
+          fname=(${{fragfile//.tsv/ }})
           sinto sort -i $fragfile -o $fname.bed
           bgzip -@ {threads} $fname.bed
           tabix -p bed $fname.bed.gz
