@@ -81,6 +81,12 @@ snakemake --configfile /path/to/config -j 24
 See the [snakemake documentation](https://snakemake.readthedocs.io/en/stable/index.html)
 for more information about running snakemake and all the available options.
 
+To generate a report containing the runtimes for different steps, run
+
+```
+snakemake --configfile /path/to/config  --report report.html
+```
+
 ## Workflow steps
 
 The BASC pipeline executes the following steps:
