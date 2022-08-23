@@ -101,5 +101,6 @@ rule fragments:
           sinto sort -i $fragfile -o $fname.bed
           bgzip -@ {threads} $fname.bed
           tabix -p bed $fname.bed.gz
+          rm $fragfile
         done
         """
